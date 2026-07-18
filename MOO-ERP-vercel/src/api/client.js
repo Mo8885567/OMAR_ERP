@@ -180,6 +180,8 @@
 
   function _makePartialRunner(successFn, failureFn) {
     var handler = {};
+    var proxy; // مرجع للـ Proxy نفسه عشان نرجعه من withSuccessHandler/withFailureHandler
+               // بدل ما نرجع الـ handler الخام (وده كان سبب الأعطال)
 
     function _addMethod(name) {
       handler[name] = function () {
@@ -192,19 +194,20 @@
     }
 
     if (typeof Proxy !== 'undefined') {
-      return new Proxy(handler, {
+      proxy = new Proxy(handler, {
         get: function (target, prop) {
           if (prop in target) return target[prop];
           if (prop === 'withSuccessHandler') {
-            return function (fn) { successFn = fn; return handler; };
+            return function (fn) { successFn = fn; return proxy; };
           }
           if (prop === 'withFailureHandler') {
-            return function (fn) { failureFn = fn; return handler; };
+            return function (fn) { failureFn = fn; return proxy; };
           }
           _addMethod(prop);
           return target[prop];
         },
       });
+      return proxy;
     }
     return handler;
   }
