@@ -250,5 +250,8 @@
     getSessionToken: _getSessionToken,
   };
 
-  console.log('🔌 MOO.ERP API Client جاهز. الرابط:', _getGasUrl() || '(غير مضبوط)');
+  // 🔒 [SEC] اتشال طباعة رابط الـ Web App (GAS_URL) في الـ console عمدًا —
+  // كان بيظهر لأي حد يفتح Developer Tools، وده معلومة حساسة عن الباك إند
+  // الحقيقي مفيش داعي إنها تكون ظاهرة. لو محتاج تتأكد من الرابط المضبوط
+  // وقت التطوير، استخدم window.GAS.getUrl() يدويًا من الـ console.
 })();
