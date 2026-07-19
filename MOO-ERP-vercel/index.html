@@ -9202,8 +9202,7 @@
       "</tbody></table></div></div>";
     html +=
       '<div class="card"><h4 style="margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="ti ti-trophy" style="color:var(--warning)"></i> أعلى العملاء</h4>';
-    html +=
-      '<div id="sld-top-customers">' + _loadingInline() + "</div></div>";
+    html += '<div id="sld-top-customers">' + _loadingInline() + "</div></div>";
     html += "</div>";
 
     return html;
@@ -9342,8 +9341,7 @@
       "</tbody></table></div></div>";
     html +=
       '<div class="card"><h4 style="margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="ti ti-building-community" style="color:#7C3AED"></i> أعلى الموردين</h4>';
-    html +=
-      '<div id="pud-top-suppliers">' + _loadingInline() + "</div></div>";
+    html += '<div id="pud-top-suppliers">' + _loadingInline() + "</div></div>";
     html += "</div>";
 
     return html;
@@ -12380,6 +12378,9 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       switchLanguage: switchLanguage,
       onReady: onReady,
       onChange: onChange,
+      isReady: function () {
+        return _ready;
+      },
       getLang: function () {
         return _lang;
       },
@@ -12808,7 +12809,8 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
     // (02_JS_UI_Shell.html) لو موجودة، وإلا بيستخدم نسخة احتياطية بسيطة
     // حتى لا يعتمد هذا الملف على ترتيب تحميل صارم.
     function _debounce(fn, wait) {
-      if (typeof global.debounce === "function") return global.debounce(fn, wait);
+      if (typeof global.debounce === "function")
+        return global.debounce(fn, wait);
       var t;
       return function () {
         var args = arguments,
@@ -12894,15 +12896,19 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       var raw;
       if (isCheckboxLike) raw = field.checked;
       else if (type === "multiSelect")
-        raw = Array.prototype.map.call(field.selectedOptions || [], function (o) {
-          return o.value;
-        });
+        raw = Array.prototype.map.call(
+          field.selectedOptions || [],
+          function (o) {
+            return o.value;
+          },
+        );
       else raw = field.tagName === "SELECT" ? field.value : field.value || "";
-      var val = type === "number" || type === "currency" || type === "percentage"
-        ? raw
-        : typeof raw === "string"
-        ? raw.trim()
-        : raw;
+      var val =
+        type === "number" || type === "currency" || type === "percentage"
+          ? raw
+          : typeof raw === "string"
+            ? raw.trim()
+            : raw;
 
       // ── required ─────────────────────────────────────────────────────
       if (rules.required) {
@@ -12944,24 +12950,40 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
           _setError(field, I18N.t("VF_MSG_NO_NEGATIVE", { label: label }));
           return false;
         }
-        if (type === "percentage" && (num < (rules.min !== undefined ? rules.min : 0) || num > (rules.max !== undefined ? rules.max : 100))) {
-          _setError(field, I18N.t("VF_MSG_INVALID_PERCENTAGE", { label: label }));
+        if (
+          type === "percentage" &&
+          (num < (rules.min !== undefined ? rules.min : 0) ||
+            num > (rules.max !== undefined ? rules.max : 100))
+        ) {
+          _setError(
+            field,
+            I18N.t("VF_MSG_INVALID_PERCENTAGE", { label: label }),
+          );
           return false;
         }
         if (type === "currency") {
           var decimals = rules.decimals !== undefined ? rules.decimals : 2;
           var curRe = new RegExp("^-?\\d+(\\.\\d{1," + decimals + "})?$");
           if (!curRe.test(String(val).trim())) {
-            _setError(field, I18N.t("VF_MSG_INVALID_CURRENCY", { label: label }));
+            _setError(
+              field,
+              I18N.t("VF_MSG_INVALID_CURRENCY", { label: label }),
+            );
             return false;
           }
         }
         if (rules.min !== undefined && num < rules.min) {
-          _setError(field, I18N.t("VF_MSG_MIN_NUMBER", { label: label, min: rules.min }));
+          _setError(
+            field,
+            I18N.t("VF_MSG_MIN_NUMBER", { label: label, min: rules.min }),
+          );
           return false;
         }
         if (rules.max !== undefined && num > rules.max) {
-          _setError(field, I18N.t("VF_MSG_MAX_NUMBER", { label: label, max: rules.max }));
+          _setError(
+            field,
+            I18N.t("VF_MSG_MAX_NUMBER", { label: label, max: rules.max }),
+          );
           return false;
         }
       } else if (type === "email") {
@@ -13052,7 +13074,10 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
         }
         if (fileObj) {
           if (rules.maxSizeMB && fileObj.size > rules.maxSizeMB * 1024 * 1024) {
-            _setError(field, I18N.t("VF_MSG_FILE_TOO_LARGE", { max: rules.maxSizeMB }));
+            _setError(
+              field,
+              I18N.t("VF_MSG_FILE_TOO_LARGE", { max: rules.maxSizeMB }),
+            );
             return false;
           }
           if (rules.allowedExtensions) {
@@ -13065,16 +13090,31 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
         }
       } else {
         // text
-        if (rules.exactLength !== undefined && val.length !== rules.exactLength) {
-          _setError(field, I18N.t("VF_MSG_EXACT_LENGTH", { label: label, len: rules.exactLength }));
+        if (
+          rules.exactLength !== undefined &&
+          val.length !== rules.exactLength
+        ) {
+          _setError(
+            field,
+            I18N.t("VF_MSG_EXACT_LENGTH", {
+              label: label,
+              len: rules.exactLength,
+            }),
+          );
           return false;
         }
         if (rules.min !== undefined && val.length < rules.min) {
-          _setError(field, I18N.t("VF_MSG_MIN_LENGTH", { label: label, min: rules.min }));
+          _setError(
+            field,
+            I18N.t("VF_MSG_MIN_LENGTH", { label: label, min: rules.min }),
+          );
           return false;
         }
         if (rules.max !== undefined && val.length > rules.max) {
-          _setError(field, I18N.t("VF_MSG_MAX_LENGTH", { label: label, max: rules.max }));
+          _setError(
+            field,
+            I18N.t("VF_MSG_MAX_LENGTH", { label: label, max: rules.max }),
+          );
           return false;
         }
       }
@@ -13108,6 +13148,26 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       if (firstError) {
         var el = _el(firstError);
         if (el) {
+          // [VF-TAB-REVEAL] لو الحقل جوه تبويب مخفي (party-tab-panel في
+          // مودالات العميل/المورد)، focus()/scrollIntoView() ما بيعملوش
+          // حاجة ظاهرة على عنصر display:none — فالمستخدم كان بيضغط "حفظ"
+          // ومفيش أي رد فعل مرئي مع إن فيه خطأ حقيقي في تبويب تاني. هنا
+          // بنفتح التبويب الصحيح الأول (لو موجود) قبل الـ focus/scroll.
+          var hiddenPanel = el.closest
+            ? el.closest(
+                '.party-tab-panel[style*="display: none"], .party-tab-panel[style*="display:none"]',
+              )
+            : null;
+          if (hiddenPanel && typeof global._switchPartyTab === "function") {
+            var panelKey = hiddenPanel.getAttribute("data-party-panel") || "";
+            var dashIdx = panelKey.indexOf("-");
+            if (dashIdx > -1) {
+              global._switchPartyTab(
+                panelKey.slice(0, dashIdx),
+                panelKey.slice(dashIdx + 1),
+              );
+            }
+          }
           el.focus();
           el.scrollIntoView({ behavior: "smooth", block: "center" });
         }
@@ -13134,10 +13194,25 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       field._vfBound = true;
 
       var realtimeTypes = {
-        email: 1, phone: 1, egyptPhone: 1, egyptTelephone: 1, url: 1,
-        date: 1, time: 1, numbersOnly: 1, lettersOnly: 1, arabicOnly: 1,
-        englishOnly: 1, nationalId: 1, taxNumber: 1, commercialRegistration: 1,
-        barcode: 1, qr: 1, decimal: 1, currency: 1, percentage: 1,
+        email: 1,
+        phone: 1,
+        egyptPhone: 1,
+        egyptTelephone: 1,
+        url: 1,
+        date: 1,
+        time: 1,
+        numbersOnly: 1,
+        lettersOnly: 1,
+        arabicOnly: 1,
+        englishOnly: 1,
+        nationalId: 1,
+        taxNumber: 1,
+        commercialRegistration: 1,
+        barcode: 1,
+        qr: 1,
+        decimal: 1,
+        currency: 1,
+        percentage: 1,
       };
       var isRealtime = realtimeTypes[rules && rules.type];
 
@@ -13160,7 +13235,10 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       // change: للـ select والـ checkbox/radio
       if (
         field.tagName === "SELECT" ||
-        (rules && (rules.type === "checkbox" || rules.type === "radio" || rules.type === "multiSelect"))
+        (rules &&
+          (rules.type === "checkbox" ||
+            rules.type === "radio" ||
+            rules.type === "multiSelect"))
       ) {
         field.addEventListener("change", function () {
           validate(fieldId, rules);
@@ -13252,7 +13330,9 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
             if (isDup) {
               _setError(
                 field,
-                I18N.t("VF_MSG_DUPLICATE", { label: opts.label || I18N.t("VF_LBL_DEFAULT_FIELD") }),
+                I18N.t("VF_MSG_DUPLICATE", {
+                  label: opts.label || I18N.t("VF_LBL_DEFAULT_FIELD"),
+                }),
               );
             } else {
               _setOk(field);
@@ -13304,7 +13384,10 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
             res = res || {};
             if (res.success === false) {
               if (typeof global.showToast === "function") {
-                global.showToast(res.message || I18N.t("VF_MSG_BUSINESS_RULE_FAILED"), "error");
+                global.showToast(
+                  res.message || I18N.t("VF_MSG_BUSINESS_RULE_FAILED"),
+                  "error",
+                );
               } else {
                 alert(res.message || I18N.t("VF_MSG_BUSINESS_RULE_FAILED"));
               }
@@ -13346,29 +13429,55 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
     // ═══════════════════════════════════════════════════════════════════
     var RULES = {
       requiredText: function (label) {
-        return { required: true, type: "text", label: label || I18N.t("VF_LBL_DEFAULT_FIELD") };
+        return {
+          required: true,
+          type: "text",
+          label: label || I18N.t("VF_LBL_DEFAULT_FIELD"),
+        };
       },
       requiredSelect: function (label) {
-        return { required: true, type: "select", label: label || I18N.t("VF_LBL_DEFAULT_SELECT") };
+        return {
+          required: true,
+          type: "select",
+          label: label || I18N.t("VF_LBL_DEFAULT_SELECT"),
+        };
       },
       requiredNum: function (label, min, max) {
         return {
-          required: true, type: "number",
+          required: true,
+          type: "number",
           label: label || I18N.t("VF_LBL_NUMBER"),
-          min: min !== undefined ? min : 0, max: max,
+          min: min !== undefined ? min : 0,
+          max: max,
         };
       },
       email: function (req) {
-        return { required: !!req, type: "email", label: I18N.t("VF_LBL_EMAIL") };
+        return {
+          required: !!req,
+          type: "email",
+          label: I18N.t("VF_LBL_EMAIL"),
+        };
       },
       phone: function (req) {
-        return { required: !!req, type: "phone", label: I18N.t("VF_LBL_PHONE") };
+        return {
+          required: !!req,
+          type: "phone",
+          label: I18N.t("VF_LBL_PHONE"),
+        };
       },
       egyptPhone: function (req) {
-        return { required: !!req, type: "egyptPhone", label: I18N.t("VF_LBL_PHONE") };
+        return {
+          required: !!req,
+          type: "egyptPhone",
+          label: I18N.t("VF_LBL_PHONE"),
+        };
       },
       egyptTelephone: function (req) {
-        return { required: !!req, type: "egyptTelephone", label: I18N.t("VF_LBL_PHONE") };
+        return {
+          required: !!req,
+          type: "egyptTelephone",
+          label: I18N.t("VF_LBL_PHONE"),
+        };
       },
       url: function (req) {
         return { required: !!req, type: "url", label: I18N.t("VF_LBL_URL") };
@@ -13380,47 +13489,94 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
         return { required: !!req, type: "time", label: I18N.t("VF_LBL_TIME") };
       },
       code: function (label) {
-        return { required: true, type: "text", min: 1, max: 50, label: label || I18N.t("VF_LBL_CODE") };
+        return {
+          required: true,
+          type: "text",
+          min: 1,
+          max: 50,
+          label: label || I18N.t("VF_LBL_CODE"),
+        };
       },
       currency: function (label, req) {
-        return { required: !!req, type: "currency", label: label || I18N.t("VF_LBL_AMOUNT") };
+        return {
+          required: !!req,
+          type: "currency",
+          label: label || I18N.t("VF_LBL_AMOUNT"),
+        };
       },
       percentage: function (label, req) {
-        return { required: !!req, type: "percentage", label: label || I18N.t("VF_LBL_PERCENTAGE") };
+        return {
+          required: !!req,
+          type: "percentage",
+          label: label || I18N.t("VF_LBL_PERCENTAGE"),
+        };
       },
       nationalId: function (req) {
-        return { required: !!req, type: "nationalId", label: I18N.t("VF_LBL_NATIONAL_ID") };
+        return {
+          required: !!req,
+          type: "nationalId",
+          label: I18N.t("VF_LBL_NATIONAL_ID"),
+        };
       },
       taxNumber: function (req) {
-        return { required: !!req, type: "taxNumber", label: I18N.t("VF_LBL_TAX_NUMBER") };
+        return {
+          required: !!req,
+          type: "taxNumber",
+          label: I18N.t("VF_LBL_TAX_NUMBER"),
+        };
       },
       commercialRegistration: function (req) {
-        return { required: !!req, type: "commercialRegistration", label: I18N.t("VF_LBL_COMMERCIAL_REG") };
+        return {
+          required: !!req,
+          type: "commercialRegistration",
+          label: I18N.t("VF_LBL_COMMERCIAL_REG"),
+        };
       },
       barcode: function (req) {
-        return { required: !!req, type: "barcode", label: I18N.t("VF_LBL_BARCODE") };
+        return {
+          required: !!req,
+          type: "barcode",
+          label: I18N.t("VF_LBL_BARCODE"),
+        };
       },
       arabicOnly: function (label, req) {
-        return { required: !!req, type: "arabicOnly", label: label || I18N.t("VF_LBL_DEFAULT_FIELD") };
+        return {
+          required: !!req,
+          type: "arabicOnly",
+          label: label || I18N.t("VF_LBL_DEFAULT_FIELD"),
+        };
       },
       englishOnly: function (label, req) {
-        return { required: !!req, type: "englishOnly", label: label || I18N.t("VF_LBL_DEFAULT_FIELD") };
+        return {
+          required: !!req,
+          type: "englishOnly",
+          label: label || I18N.t("VF_LBL_DEFAULT_FIELD"),
+        };
       },
       password: function () {
-        return { required: true, type: "text", min: 8, label: I18N.t("VF_LBL_PASSWORD") };
+        return {
+          required: true,
+          type: "text",
+          min: 8,
+          label: I18N.t("VF_LBL_PASSWORD"),
+        };
       },
       file: function (allowedExtensions, maxSizeMB, req) {
         return {
-          required: !!req, type: "file",
-          allowedExtensions: allowedExtensions, maxSizeMB: maxSizeMB || 5,
+          required: !!req,
+          type: "file",
+          allowedExtensions: allowedExtensions,
+          maxSizeMB: maxSizeMB || 5,
           label: I18N.t("VF_LBL_FILE"),
         };
       },
       image: function (maxSizeMB, req) {
         return {
-          required: !!req, type: "file",
+          required: !!req,
+          type: "file",
           allowedExtensions: ["jpg", "jpeg", "png", "gif", "webp"],
-          maxSizeMB: maxSizeMB || 5, label: I18N.t("VF_LBL_IMAGE"),
+          maxSizeMB: maxSizeMB || 5,
+          label: I18N.t("VF_LBL_IMAGE"),
         };
       },
     };
@@ -13442,8 +13598,15 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
     // نفس قائمة كلمات المرور الشائعة الممنوعة في Code_12_Core.js —
     // موجودة هنا فقط لعرض تحذير فوري للمستخدم، التحقق الملزم في السيرفر.
     var PASSWORD_BANNED = [
-      "password", "Password1!", "123456", "admin123",
-      "Admin123!", "12345678", "qwerty", "abc123", "Aa123456!",
+      "password",
+      "Password1!",
+      "123456",
+      "admin123",
+      "Admin123!",
+      "12345678",
+      "qwerty",
+      "abc123",
+      "Aa123456!",
     ];
 
     /**
@@ -14022,6 +14185,9 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       "updateShipment",
       "addColor",
       "updateColor",
+      "addSize",
+      "updateSize",
+      "deleteSize",
       "saveItemWithColorSync",
       "viewAuditLog",
       "viewExecutiveReports",
@@ -14732,7 +14898,17 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
     window.PAGE_TITLES = PAGE_TITLES;
     updateTopBarTitle(PAGE_TITLES[page] || "");
     if (typeof renderPageTrail === "function") renderPageTrail(page);
-    switch (page) {
+    // [RENDER-CRASH-FIX] لحد دلوقتي: لو render*/bind* أي شاشة رمت
+    // Exception (زي مشكلة "شاشة الباركود مش بتعرض المحتوي صح" —
+    // كانت بتسيب محتوى الشاشة القديمة زي ما هو على الشاشة لأن
+    // c.innerHTML مبيتحدّثش أصلاً لو الخطأ حصل قبل رجوع render*()،
+    // مع إن الـ breadcrumb/sidebar فوق كانوا بيتحدّثوا عادي — فيبان
+    // للمستخدم إنه "فاتح شاشة غلط" أو شاشة ناقصة من غير أي تنبيه).
+    // دلوقتي أي خطأ بيتلقّط، يتسجّل كامل (مع stack) في الكونسول
+    // للتشخيص، ويظهر للمستخدم شاشة خطأ واضحة فيها زرار "إعادة
+    // المحاولة" بدل ما يفضل شايف محتوى شاشة تانية بصمت.
+    try {
+      switch (page) {
       case "dashboard":
         c.innerHTML = renderDashboard();
         bindDashboard();
@@ -15068,10 +15244,6 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       case "size_definitions":
         c.innerHTML = renderSizeDefinitions();
         bindSizeDefinitions();
-        break;
-      case "barcode":
-        c.innerHTML = renderBarcode();
-        bindBarcode();
         break;
       case "audit_log":
         if (!canDo("viewAuditLog")) {
@@ -15655,6 +15827,25 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
           '<div style="font-size:11px;color:var(--text3);margin-top:8px">MOO.ERP — Enterprise Resource Planning v5.0</div>' +
           "</div>";
         break;
+      }
+    } catch (e) {
+      console.error(
+        "[RENDER-CRASH] فشل رسم الشاشة \"" + page + '":',
+        e && e.stack ? e.stack : e,
+      );
+      c.innerHTML =
+        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:14px;text-align:center;padding:40px">' +
+        '<i class="ti ti-alert-triangle" style="font-size:48px;color:var(--danger,#ef4444)"></i>' +
+        '<div style="font-size:18px;font-weight:700;color:var(--text1)">حصل خطأ أثناء تحميل هذه الشاشة</div>' +
+        '<div style="font-size:13px;color:var(--text3);max-width:420px;font-family:monospace;direction:ltr">' +
+        esc((e && e.message) || String(e)) +
+        "</div>" +
+        '<div style="display:flex;gap:8px">' +
+        '<button class="btn btn-primary" onclick="renderPage(\'' +
+        page +
+        "')\"><i class=\"ti ti-refresh\" style=\"margin-left:6px\"></i>إعادة المحاولة</button>" +
+        '<button class="btn btn-outline" onclick="navigate(\'dashboard\')">العودة للوحة التحكم</button>' +
+        "</div></div>";
     }
     // 🔒 [LEADING-ZERO-FIX] حماية شاملة على مستوى المشروع: أي حقل هاتف/كود/
     // SKU/Barcode/رقم قومي يظهر في الصفحة المرسومة يُؤمَّن تلقائيًا من فقدان
@@ -15920,7 +16111,27 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
     return null;
   }
 
+  var _permI18nPatchRegistered = false;
+  /** يعيد حساب label/catLabel لكل صلاحيات APP.data.permissions أول ما
+   *  قاموس الترجمة يوصل (لو _parseData اشتغل قبل ما I18N يخلص تحميل).
+   *  بيتسجّل مرة واحدة بس عبر I18N.onReady. */
+  function _patchPermissionLabelsWhenI18nReady() {
+    if (_permI18nPatchRegistered) return;
+    if (typeof I18N === "undefined" || !I18N.onReady) return;
+    _permI18nPatchRegistered = true;
+    I18N.onReady(function () {
+      var list = (APP.data && APP.data.permissions) || [];
+      list.forEach(function (p) {
+        if (!p.label && p.labelKey) p.label = I18N.t(p.labelKey) || p.key;
+        if (!p.catLabel && p.catLabelKey)
+          p.catLabel = I18N.t(p.catLabelKey) || p.cat;
+      });
+      if (typeof render === "function") render();
+    });
+  }
+
   function _parseData(d) {
+    _patchPermissionLabelsWhenI18nReady();
     var items = (d.items || []).map(function (it) {
       it.id = it.id != null ? String(it.id) : "";
       if (!it.colors_json && it.calor) {
@@ -15955,7 +16166,40 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
       companySettings: d.companySettings || {},
       // ✅ جديد
       roles: d.roles || [],
-      permissions: d.permissions || [],
+      // ✅ [FIX] ALL_PERMISSIONS في السيرفر (Code_18_Permissions.js) بيحتوي
+      // labelKey/catLabelKey (مفاتيح ترجمة) بس — مفيش أي label/catLabel نصي
+      // مباشر. كل شاشات الصلاحيات (مودال الدور، مصفوفة الصلاحيات،
+      // Override المستخدمين في Templates_06.html/08_JS_Users_Branding.html/
+      // 10_JS_Settings_Search_Parties.html) بتقرا p.label و p.catLabel
+      // مباشرة (esc(p.label)، cats[p.cat]={label:p.catLabel})، فكانت
+      // بترجع undefined دايمًا → نص فاضي في كل صف وكل عنوان فئة. الحل
+      // المركزي هنا: نحسب label/catLabel مرة واحدة وقت تحميل البيانات
+      // (بدل تعديل كل ملفات العرض)، مع fallback آمن لو الترجمة ناقصة.
+      permissions: (d.permissions || []).map(function (p) {
+        // ✅ [FIX-2] لو I18N لسه بيحمّل القاموس (سباق بين bootstrap
+        // البيانات و bootstrap الترجمة وقت فتح التطبيق)، I18N.t() كان
+        // بيرجع دايمًا "مفقود" ويطبع تحذير في الـ console لكل مفتاح صلاحية
+        // (حتى لو المفتاح موجود فعلاً في القاموس، بس لسه ما وصلش). الحل:
+        // لو مش جاهز، نسيب label/catLabel فاضيين مؤقتًا من غير ما ننادي
+        // I18N.t() خالص، وبعدين _patchPermissionLabelsWhenI18nReady()
+        // (تحت) بتعيد حسابهم أوتوماتيك أول ما القاموس يوصل.
+        var i18nReady =
+          typeof I18N !== "undefined" &&
+          I18N.t &&
+          (typeof I18N.isReady !== "function" || I18N.isReady());
+        var _t = i18nReady
+          ? I18N.t
+          : function () {
+              return "";
+            };
+        return Object.assign({}, p, {
+          label: p.label || (p.labelKey && i18nReady ? _t(p.labelKey) : "") || p.key,
+          catLabel:
+            p.catLabel ||
+            (p.catLabelKey && i18nReady ? _t(p.catLabelKey) : "") ||
+            p.cat,
+        });
+      }),
       userOverrides: d.userOverrides || {},
       // ✅ FIX: العملاء والموردين
       customers: d.customers || [],
@@ -19116,11 +19360,6 @@ RULE 10 — [DL-UNIFY] ممنوع أي منطق retry/timeout/تطبيع است�
           page: "opening_stock",
           icon: navIcon("ti-archive", "#374151"),
           label: "MENU_OPENING_STOCK",
-        },
-        {
-          page: "barcode",
-          icon: navIcon("ti-barcode", "#92400E"),
-          label: "MENU_PRINT_BARCODE",
         },
         {
           page: "color_definitions",
